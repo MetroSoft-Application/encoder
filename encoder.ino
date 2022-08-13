@@ -5,60 +5,67 @@
 #include <LiquidCrystal_I2C.h>
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
-const int pinA = 2;//A‘Š Š„‚è‚İ0
-const int pinB = 3;//B‘Š Š„‚è‚İ1
-const int pinZ = 21;//Z‘Š
-const int PIN_DHT = 8;//DHT‰·“xƒZƒ“ƒT
-const int LED_PIN = 11;
-const int resolution = 4000;//•ª‰ğ”\
-const int timeInterval = 1000;//ƒTƒ“ƒvƒŠƒ“ƒOüŠú
+const int pinA = 2;    // A
+const int pinB = 3;    // B
+const int pinZ = 21;   // Z
+const int PIN_DHT = 8; // DHT
+const int LED_PIN = 13;
+const int resolution = 4000;  //
+const int timeInterval = 500; //
 volatile long enc_count = 0;
 volatile long nowPos = 0;
 volatile long prePos = 0;
 volatile unsigned long count = 0;
-int incomingByte = 0;  // óMƒf[ƒ^—p
-DHT dht(PIN_DHT,DHT11);
+int incomingByte = 0; //
+DHT dht(PIN_DHT, DHT11);
 int sequence = 0;
 unsigned int counter = 0;
+volatile int LED_STATE = LOW;
+void enc_changedPinA();
+void enc_changedPinB();
 //////////////////////////////////////////////////////////////////
 void setup()
 {
-  lcd.init();
-  lcd.begin(20, 4);
-  lcd.backlight();
-  Serial.begin(9600);
-  pinMode(pinA,INPUT);
-  pinMode(pinB,INPUT);
-  pinMode(pinZ,INPUT);
-  attachInterrupt(0, enc_changedPinA, CHANGE); //pinA‚ÌM†•Ï‰»‚É‡‚í‚¹‚ÄŠ„‚è‚İˆ—
-  attachInterrupt(1, enc_changedPinB, CHANGE); //pinB‚ÌM†•Ï‰»‚É‡‚í‚¹‚ÄŠ„‚è‚İˆ—
-  //attachInterrupt(2, enc_changedPinZ, CHANGE); //pinZ‚ÌM†•Ï‰»‚É‡‚í‚¹‚ÄŠ„‚è‚İˆ—
-  MsTimer2::set(timeInterval,Detect);
+
+  // lcd.init();
+  // lcd.begin(20, 4);
+  // lcd.backlight();
+  Serial.begin(19200);
+  Serial.println(0);
+  pinMode(pinA, INPUT_PULLUP);
+  pinMode(pinB, INPUT_PULLUP);
+  pinMode(pinZ, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT);
+  attachInterrupt(0, enc_changedPinA, CHANGE); // pinAã®ä¿¡å·å¤‰åŒ–ã«åˆã‚ã›ã¦å‰²ã‚Šè¾¼ã¿å‡¦ç†
+  attachInterrupt(1, enc_changedPinB, CHANGE); // pinBã®ä¿¡å·å¤‰åŒ–ã«åˆã‚ã›ã¦å‰²ã‚Šè¾¼ã¿å‡¦ç†
+  // attachInterrupt(2, enc_changedPinZ, CHANGE); //pinZã®ä¿¡å·å¤‰åŒ–ã«åˆã‚ã›ã¦å‰²ã‚Šè¾¼ã¿å‡¦ç†
+  MsTimer2::set(timeInterval, Detect);
   MsTimer2::start();
-  //Timer1.initialize(1000); //ƒ}ƒCƒNƒ•b’PˆÊ‚Åİ’è
-  //Timer1.attachInterrupt(count_time);
-  dht.begin();
-  analogWrite(LED_PIN, 255);
+  // Timer1.initialize(1000); //ãƒã‚¤ã‚¯ãƒ­ç§’å˜ä½ã§è¨­å®š
+  // Timer1.attachInterrupt(count_time);
+  // dht.begin();
+  // analogWrite(LED_PIN, 255);
 }
 //////////////////////////////////////////////////////////////////
 void loop()
 {
-  //TIMSK0= 0;
-  //ƒVƒŠƒAƒ‹ƒRƒ“ƒ\[ƒ‹‚ÉŒ»İ‚Ì’l‚ğo—Í‚·‚é
-  //Serial.println(enc_count);
-  //delayMicroseconds(10);
+  // TIMSK0= 0;
+  //ã‚·ãƒªã‚¢ãƒ«ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ã«ç¾åœ¨ã®å€¤ã‚’å‡ºåŠ›ã™ã‚‹
+  // Serial.println(enc_count);
+  // delayMicroseconds(10);
   /*
-    if (Serial.available() > 0) { // óM‚µ‚½ƒf[ƒ^‚ª‘¶İ‚·‚é
-    incomingByte = Serial.read(); // óMƒf[ƒ^‚ğ“Ç‚İ‚Ş
+    if (Serial.available() > 0) { // å—ä¿¡ã—ãŸãƒ‡ãƒ¼ã‚¿ãŒå­˜åœ¨ã™ã‚‹
+    incomingByte = Serial.read(); // å—ä¿¡ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
 
-    Serial.print("I received:"); // óMƒf[ƒ^‚ğ‘—‚è‚©‚¦‚·
+    Serial.print("I received:"); // å—ä¿¡ãƒ‡ãƒ¼ã‚¿ã‚’é€ã‚Šã‹ãˆã™
     Serial.println(incomingByte, DEC);
-    
+
   }
   */
 }
 //////////////////////////////////////////////////////////////////
-void PrintTemperatureHumidity() {
+void PrintTemperatureHumidity()
+{
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();
   lcd.clear();
@@ -73,17 +80,16 @@ void PrintTemperatureHumidity() {
   lcd.setCursor(0, 2);
   lcd.print("counter:      ");
   lcd.print(counter);
-  counter+=2;
+  counter += 2;
   lcd.blink();
   LEDBlink();
 }
 //////////////////////////////////////////////////////////////////
-void LEDBlink() {
-  for (int i = 0; i <= 255; i++) {
-    analogWrite(LED_PIN, i);
-    delay(1);
-  }
-  analogWrite(LED_PIN, 0);
+void LEDBlink()
+{
+  LED_STATE = !LED_STATE;
+  digitalWrite(LED_PIN, LED_STATE);
+  // digitalWrite(LED_PIN, LOW);
 }
 //////////////////////////////////////////////////////////////////
 void count_time()
@@ -93,53 +99,72 @@ void count_time()
 //////////////////////////////////////////////////////////////////
 void count_inc()
 {
-  //if(digitalRead(pinZ) == 1)  ++enc_count;
-  //else ++enc_count;
+  // if(digitalRead(pinZ) == 1)  ++enc_count;
+  // else ++enc_count;
   ++enc_count;
 }
 //////////////////////////////////////////////////////////////////
 void count_dec()
 {
-  //if(digitalRead(pinZ) == 1) --enc_count;
-  //else --enc_count;
+  // if(digitalRead(pinZ) == 1) --enc_count;
+  // else --enc_count;
   --enc_count;
 }
 //////////////////////////////////////////////////////////////////
-//pinA‚ÌŠ„‚è‚İˆ—
+// pinAã®å‰²ã‚Šè¾¼ã¿å‡¦ç†
 void enc_changedPinA()
 {
-  if(digitalRead(pinA))
+  if (digitalRead(pinA))
   {
-    if(digitalRead(pinB)) count_dec();
-    else count_inc();
-  } else {
-    if(digitalRead(pinB)) count_inc();
-    else count_dec();
+    if (digitalRead(pinB))
+      count_dec();
+    else
+      count_inc();
+  }
+  else
+  {
+    if (digitalRead(pinB))
+      count_inc();
+    else
+      count_dec();
   }
 }
-//pinB‚ÌŠ„‚è‚İˆ—
+// pinBã®å‰²ã‚Šè¾¼ã¿å‡¦ç†
 void enc_changedPinB()
 {
-  if(digitalRead(pinB))
+  if (digitalRead(pinB))
   {
-    if(digitalRead(pinA)) count_inc();
-    else count_dec();
-  } else {
-    if(digitalRead(pinA)) count_dec();
-    else count_inc();
+    if (digitalRead(pinA))
+      count_inc();
+    else
+      count_dec();
+  }
+  else
+  {
+    if (digitalRead(pinA))
+      count_dec();
+    else
+      count_inc();
   }
 }
 //////////////////////////////////////////////////////////////////
-int Detect(){
+int Detect()
+{
+  // Serial.println(0);
   nowPos = enc_count;
-  float speedRPM = (nowPos - prePos)* (1000/timeInterval) * 60 / resolution ;
+  float speedRPM = (nowPos - prePos) * (1000 / timeInterval) * 60 / resolution;
+  Serial.println("speedRPM");
   Serial.println(speedRPM);
+  Serial.println("nowPos");
   Serial.println(nowPos);
+  Serial.println("prePos");
   Serial.println(prePos);
   prePos = nowPos;
-  float humidity = dht.readHumidity();
-  float temperature = dht.readTemperature();
-  //PrintTemperatureHumidity();
+  // float humidity = dht.readHumidity();
+  // float temperature = dht.readTemperature();
+  // PrintTemperatureHumidity();
   LEDBlink();
+  Serial.println("LED_STATE");
+  Serial.println(LED_STATE);
   return speedRPM;
 }
