@@ -1,5 +1,5 @@
-#include <MsTimer2.h>
 #include <Wire.h>
+#include <MsTimer2/MsTimer2.h>
 
 const int pinA = 2;    // A
 const int pinB = 3;    // B
@@ -92,7 +92,7 @@ void enc_changedPinB()
   }
 }
 //////////////////////////////////////////////////////////////////
-int Detect()
+void Detect()
 {
   nowPos = enc_count;
   float speedRPM = (nowPos - prePos) * (1000 / timeInterval) * 60 / resolution;
@@ -106,5 +106,4 @@ int Detect()
   LEDBlink();
   Serial.println("LED_STATE");
   Serial.println(LED_STATE);
-  return speedRPM;
 }

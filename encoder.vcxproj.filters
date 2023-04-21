@@ -27,7 +27,7 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Arduino\libraries\MsTimer2\MsTimer2.h">
+    <ClInclude Include="..\Arduino\libraries\MsTimer2\MsTimer2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
