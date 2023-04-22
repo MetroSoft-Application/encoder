@@ -1,12 +1,12 @@
 #include <Wire.h>
 #include <MsTimer2/MsTimer2.h>
 
-const int pinA = 2;    // A
-const int pinB = 3;    // B
-const int pinZ = 21;   // Z
+const int pinA = 2;    // A相
+const int pinB = 3;    // B相
+const int pinZ = 21;   // Z相
 const int LED_PIN = 13;
-const int resolution = 4000;  //
-const int timeInterval = 500; //
+const int resolution = 4000;  //エンコーダ分解能(4逓倍)
+const int timeInterval = 500; //計測感覚
 volatile long enc_count = 0;
 volatile long nowPos = 0;
 volatile long prePos = 0;
